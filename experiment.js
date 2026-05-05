@@ -1,4 +1,8 @@
-const DATAPIPE_EXPERIMENT_ID = "kjTo6QTrIzDH";
+const DATAPIPE_CONFIG = {
+  experimentId: "kjTo6QTrIzDH",
+  osfProjectId: "qfzup",
+  osfComponentId: "Zn9rp",
+};
 
 function getExportDataCsv() {
   return jsPsych.data
@@ -39,8 +43,8 @@ const counterbalanceList = jsPsych.randomization.sampleWithoutReplacement(
 )[0];
 
 if (
-  !DATAPIPE_EXPERIMENT_ID ||
-  DATAPIPE_EXPERIMENT_ID === "PASTE_YOUR_DATAPIPE_EXPERIMENT_ID_HERE"
+  !DATAPIPE_CONFIG.experimentId ||
+  DATAPIPE_CONFIG.experimentId === "PASTE_YOUR_DATAPIPE_EXPERIMENT_ID_HERE"
 ) {
   console.warn("DataPipe is not configured yet. Add your DataPipe experiment ID in experiment.js.");
 }
@@ -48,7 +52,7 @@ if (
 const save_data_trial = {
   type: jsPsychPipe,
   action: "save",
-  experiment_id: DATAPIPE_EXPERIMENT_ID,
+  experiment_id: DATAPIPE_CONFIG.experimentId,
   filename: getDataFilename(),
   data_string: function () {
     return getExportDataCsv();
