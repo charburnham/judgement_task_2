@@ -1,7 +1,7 @@
 const DATAPIPE_CONFIG = {
+  // This is the only value the jsPsych Pipe plugin sends to DataPipe.
+  // The OSF destination is configured in the DataPipe dashboard for this experiment ID.
   experimentId: "kjTo6QTrIzDH",
-  osfProjectId: "qfzup",
-  osfComponentId: "Zn9rp",
 };
 
 function getExportDataCsv() {
@@ -473,8 +473,8 @@ const instructionPages = {
           <div class="study-box">
             <h2>Instructions</h2>
             <p>In this experiment, you will hear a series of short recorded statements.</p>
-            <p>After each recording, you will rate how easy or difficult the speaker was to understand on a continuous line.</p>
-            <p>You will then rate how true you think the statement is on a continuous line.</p>
+            <p>After each recording, you will rate how true you think the statement is on a continuous line.</p>
+            <p>You will then rate how easy or difficult the speaker was to understand on a continuous line.</p>
             <p>Please work as accurately and as quickly as you can.</p>
           </div>
         `,
@@ -491,14 +491,15 @@ const instructionPages = {
             <h2>How To Respond</h2>
             <p>First, listen carefully to the audio recording.</p>
             <p>Then answer the questions on the next screens by moving the marker along each line:</p>
-            <ul>
-              <li>For the speaker understanding rating, the left end means <strong>Very easy</strong> and the right end means <strong>Very difficult</strong>.</li>
-            </ul>
-            <p>After that, you will rate how true the statement seems:</p>
+            <p>First, you will rate how true the statement seems:</p>
             <ul>
               <li>The left end means <strong>definitely false</strong>.</li>
               <li>The right end means <strong>definitely true</strong>.</li>
               <li>Any point in between lets you show how strongly you judge the statement to be false or true.</li>
+            </ul>
+            <p>After that, you will rate how easy or difficult the speaker was to understand:</p>
+            <ul>
+              <li>For the speaker understanding rating, the left end means <strong>Very easy</strong> and the right end means <strong>Very difficult</strong>.</li>
             </ul>
             <p>Please respond as quickly as possible.</p>
           </div>
@@ -612,7 +613,6 @@ const difficultyRatingTrial = {
       <div class="big-question">How easy or difficult was this speaker to understand?</div>
       <p>Move the marker to the point on the line that best matches your judgment.</p>
       <p class="truth-scale-instruction">Left end: Very easy. Right end: Very difficult.</p>
-      <p class="small-note">Reaction time for this judgment is recorded automatically.</p>
     </div>
   `,
   labels: ["Very easy", "Very difficult"],
@@ -657,7 +657,6 @@ const judgmentTrial = {
       <div class="big-question">How true do you think the statement you just heard is?</div>
       <p>Move the marker to the point on the line that best matches your judgment.</p>
       <p class="truth-scale-instruction">Left end: definitely false. Right end: definitely true.</p>
-      <p class="small-note">Reaction time for this judgment is recorded automatically.</p>
     </div>
   `,
   labels: ["definitely false", "definitely true"],
@@ -697,7 +696,7 @@ const judgmentTrial = {
 };
 
 const mainTrials = {
-  timeline: [audioTrial, difficultyRatingTrial, judgmentTrial],
+  timeline: [audioTrial, judgmentTrial, difficultyRatingTrial],
   timeline_variables: trialStimuli,
   randomize_order: false,
   conditional_function: function () {
@@ -714,7 +713,7 @@ const practiceIntro = {
         <div class="study-box center-text">
           <h2>Listening Practice Trial</h2>
           <p>You are about to complete one listening practice trial.</p>
-          <p>Listen to the recording, rate how easy or difficult the speaker was to understand, and then rate how true the statement seems.</p>
+          <p>Listen to the recording, rate how true the statement seems, and then rate how easy or difficult the speaker was to understand.</p>
           <p>This trial is only for practice.</p>
         </div>
       `,
@@ -731,7 +730,7 @@ const practiceIntro = {
 };
 
 const practiceTrials = {
-  timeline: [audioTrial, difficultyRatingTrial, judgmentTrial],
+  timeline: [audioTrial, judgmentTrial, difficultyRatingTrial],
   timeline_variables: practiceTrialStimulus ? [practiceTrialStimulus] : [],
   randomize_order: false,
   conditional_function: function () {
@@ -793,8 +792,6 @@ const completionScreen = {
       stimulus: `
         <div class="study-box center-text">
           <h2>Finished</h2>
-          <p>Your responses have been sent to the OSF through DataPipe.</p>
-          <p><strong>Filename:</strong> ${getDataFilename()}</p>
           <p>You can now close this browser tab.</p>
         </div>
       `,
