@@ -1,7 +1,9 @@
 const DATAPIPE_CONFIG = {
   // This is the only value the jsPsych Pipe plugin sends to DataPipe.
   // The OSF destination is configured in the DataPipe dashboard for this experiment ID.
-  experimentId: "kjTo6QTrIzDH",
+  experimentId: "3kGhOHOyoEfL",
+  osfProjectId: "9mnw6",
+  osfDataComponentId: "wybhp",
 };
 
 function getExportDataCsv() {
