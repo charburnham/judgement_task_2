@@ -611,8 +611,6 @@ const difficultyRatingTrial = {
   stimulus: `
     <div class="study-box center-text truth-scale-trial">
       <div class="big-question">How easy or difficult was this speaker to understand?</div>
-      <p>Move the marker to the point on the line that best matches your judgment.</p>
-      <p class="truth-scale-instruction">Left end: Very easy. Right end: Very difficult.</p>
     </div>
   `,
   labels: ["Very easy", "Very difficult"],
