@@ -6,6 +6,8 @@ const DATAPIPE_CONFIG = {
   osfDataComponentId: "wybhp",
 };
 
+const AUDIO_ASSET_VERSION = "2026-05-12-native2-refresh";
+
 function getExportDataCsv() {
   return jsPsych.data
     .get()
@@ -109,7 +111,9 @@ const EXPERIMENT_FILLER_ITEMS = FILLER_ITEMS.filter(function (item) {
 });
 
 function buildAudioPath(speaker, clipCode) {
-  return `audio/${speaker.folder}/${speaker.filename_prefix}_${clipCode}_audio.${AUDIO_FILE_EXTENSION}`;
+  return `audio/${speaker.folder}/${speaker.filename_prefix}_${clipCode}_audio.${AUDIO_FILE_EXTENSION}?v=${encodeURIComponent(
+    AUDIO_ASSET_VERSION
+  )}`;
 }
 
 function buildBalancedStimuli(items) {
