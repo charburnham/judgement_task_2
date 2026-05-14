@@ -6,6 +6,12 @@ const DATAPIPE_CONFIG = {
   osfDataComponentId: "wybhp",
 };
 
+const PROLIFIC_CONFIG = {
+  // In Prolific study setup, choose "I'll redirect them using a URL"
+  // and paste the completion URL they generate here.
+  completionUrl: "PASTE_YOUR_PROLIFIC_COMPLETION_URL_HERE",
+};
+
 const AUDIO_ASSET_VERSION = "2026-05-12-native2-refresh";
 
 function getExportDataCsv() {
@@ -33,13 +39,25 @@ function getDataFilename() {
   return `${formatTimestampForFilename(sessionStartedAt)}_${participantFileSuffix}.csv`;
 }
 
+function hasConfiguredProlificCompletionUrl() {
+  return (
+    Boolean(PROLIFIC_CONFIG.completionUrl) &&
+    PROLIFIC_CONFIG.completionUrl !== "PASTE_YOUR_PROLIFIC_COMPLETION_URL_HERE"
+  );
+}
+
 const jsPsych = initJsPsych({
   show_progress_bar: true,
   message_progress_bar: "Study progress",
 });
 
-const participantId = jsPsych.randomization.randomID(8);
-const participantFileSuffix = participantId.slice(0, 4).toLowerCase();
+const prolificParticipantId = jsPsych.data.getURLVariable("PROLIFIC_PID");
+const prolificStudyId = jsPsych.data.getURLVariable("STUDY_ID");
+const prolificSessionId = jsPsych.data.getURLVariable("SESSION_ID");
+const generatedParticipantId = jsPsych.randomization.randomID(8);
+const participantId = prolificParticipantId || generatedParticipantId;
+const participantIdSource = prolificParticipantId ? "prolific" : "generated";
+const participantFileSuffix = participantId.slice(0, 8).toLowerCase();
 const sessionStartedAt = new Date();
 const counterbalanceList = jsPsych.randomization.sampleWithoutReplacement(
   [1, 2, 3, 4],
@@ -51,6 +69,12 @@ if (
   DATAPIPE_CONFIG.experimentId === "PASTE_YOUR_DATAPIPE_EXPERIMENT_ID_HERE"
 ) {
   console.warn("DataPipe is not configured yet. Add your DataPipe experiment ID in experiment.js.");
+}
+
+if (prolificParticipantId && !hasConfiguredProlificCompletionUrl()) {
+  console.warn(
+    "Prolific participant detected, but no Prolific completion URL is configured. Add it in PROLIFIC_CONFIG."
+  );
 }
 
 const save_data_trial = {
@@ -98,6 +122,10 @@ const SAMPLE_RECORDINGS = [
 
 jsPsych.data.addProperties({
   participant_id: participantId,
+  participant_id_source: participantIdSource,
+  prolific_pid: prolificParticipantId || null,
+  prolific_study_id: prolificStudyId || null,
+  prolific_session_id: prolificSessionId || null,
   counterbalance_list: counterbalanceList,
   study_name: "accent_credibility_four_speakers",
 });
@@ -798,16 +826,33 @@ const completionScreen = {
   timeline: [
     {
       type: jsPsychHtmlButtonResponse,
-      stimulus: `
-        <div class="study-box center-text">
-          <h2>Finished</h2>
-          <p>You can now close this browser tab.</p>
-        </div>
-      `,
-      choices: ["Close"],
+      stimulus: function () {
+        if (prolificParticipantId && hasConfiguredProlificCompletionUrl()) {
+          return `
+            <div class="study-box center-text">
+              <h2>Finished</h2>
+              <p>Your responses have been saved.</p>
+              <p>Click below to return to Prolific and complete your submission.</p>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="study-box center-text">
+            <h2>Finished</h2>
+            <p>You can now close this browser tab.</p>
+          </div>
+        `;
+      },
+      choices: [prolificParticipantId && hasConfiguredProlificCompletionUrl() ? "Return to Prolific" : "Close"],
       data: {
         trial_name: "completion_screen",
         exclude_from_export: true,
+      },
+      on_finish: function () {
+        if (prolificParticipantId && hasConfiguredProlificCompletionUrl()) {
+          window.location.assign(PROLIFIC_CONFIG.completionUrl);
+        }
       },
     },
   ],
